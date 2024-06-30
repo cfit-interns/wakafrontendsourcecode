@@ -1,26 +1,25 @@
-import {useNavigate} from "react-router-dom"
-import {Bookings} from "../models/bookings"
-import {useForm} from "react-hook-form";
-import {BookingDetail} from "../network/websites_api";
+import { useNavigate } from "react-router-dom";
+import { Bookings } from "../models/bookings";
+import { useForm } from "react-hook-form";
+import { BookingDetail } from "../network/websites_api";
 import * as WebsitesApi from "../network/websites_api";
 import styles from "../styles/BookingPage.module.css";
-import {Button, Card, Form} from "react-bootstrap";
+import { Button, Card, Form } from "react-bootstrap";
 import TextInputField from "./form/TextInputField";
-import textInputField from "./form/TextInputField";
-import {useEffect, useState} from "react";
-import {Rosters} from "../models/rosters";
+import { useEffect, useState } from "react";
+import { Rosters } from "../models/rosters";
 
 interface BookingPageLoggedInViewProps {
-  onBookingSaved: (bookings: Bookings) => void,
+  onBookingSaved: (bookings: Bookings) => void; // Callback function when booking is saved
 }
 
-const BookingPagedLoggedInView = ({onBookingSaved}: BookingPageLoggedInViewProps) => {
+const BookingPagedLoggedInView = ({ onBookingSaved }: BookingPageLoggedInViewProps) => {
   const navigate = useNavigate();
-  const {register, handleSubmit, watch, formState: {errors, isSubmitting}} = useForm<BookingDetail>();
+  const { register, handleSubmit, watch, formState: { errors, isSubmitting } } = useForm<BookingDetail>();
 
   const [dateList, setDateList] = useState<Rosters[]>([]);
 
-  // 监听 date 字段的变化
+  // Watch for changes in the 'date' field
   const watchDate = watch('date', '');
 
   useEffect(() => {
@@ -30,10 +29,11 @@ const BookingPagedLoggedInView = ({onBookingSaved}: BookingPageLoggedInViewProps
     }
   }, [watchDate]);
 
+  // Fetch available suggestions based on selected date
   async function getSuggestions(date: string) {
     try {
       const suggestions = await WebsitesApi.getDestinationSuggestions(date);
-      setDateList(suggestions)
+      setDateList(suggestions);
       console.log(suggestions);
     } catch (error) {
       console.error(error);
@@ -41,11 +41,12 @@ const BookingPagedLoggedInView = ({onBookingSaved}: BookingPageLoggedInViewProps
     }
   }
 
+  // Handle form submission
   async function onSubmit(input: BookingDetail) {
     try {
       const bookingResponse = await WebsitesApi.createBooking(input);
-      onBookingSaved(bookingResponse);
-      navigate('/BookingReceivedPage');
+      onBookingSaved(bookingResponse); // Invoke callback when booking is successfully saved
+      navigate('/BookingReceivedPage'); // Navigate to BookingReceivedPage after submission
     } catch (error) {
       console.error(error);
       alert(error);
@@ -55,10 +56,13 @@ const BookingPagedLoggedInView = ({onBookingSaved}: BookingPageLoggedInViewProps
   return (
     <div className={`${styles.bookingpageContents}`}>
       <Card className={`${styles.card} p-2`}>
-        <Card.Title className={styles.title}> <br/>
+        <Card.Title className={styles.title}>
+          <br/>
           <center><b>Booking Request Form</b></center>
-        </Card.Title> <br/>
+        </Card.Title>
+        <br/>
         <Form id='bookingForm' onSubmit={handleSubmit(onSubmit)}>
+          {/* Form inputs for booking details */}
           <div className="row">
             <div className="col-md-6">
               <Form.Group className="mb-3" controlId="firstName">
@@ -68,7 +72,7 @@ const BookingPagedLoggedInView = ({onBookingSaved}: BookingPageLoggedInViewProps
                   className="inputBootstrap"
                   placeholder="First Name"
                   isInvalid={!!errors.firstName}
-                  {...register("firstName", {required: "Required"})}
+                  {...register("firstName", { required: "Required" })}
                 />
                 <Form.Control.Feedback type="invalid">
                   {errors.firstName?.message}
@@ -83,7 +87,7 @@ const BookingPagedLoggedInView = ({onBookingSaved}: BookingPageLoggedInViewProps
                   className="inputBootstrap"
                   placeholder="Last Name"
                   isInvalid={!!errors.lastName}
-                  {...register("lastName", {required: "Required"})}
+                  {...register("lastName", { required: "Required" })}
                 />
                 <Form.Control.Feedback type="invalid">
                   {errors.lastName?.message}
@@ -101,7 +105,7 @@ const BookingPagedLoggedInView = ({onBookingSaved}: BookingPageLoggedInViewProps
                   className="inputBootstrap"
                   placeholder="Phone Number"
                   isInvalid={!!errors.phoneNumber}
-                  {...register("phoneNumber", {required: "Required"})}
+                  {...register("phoneNumber", { required: "Required" })}
                 />
                 <Form.Control.Feedback type="invalid">
                   {errors.phoneNumber?.message}
@@ -116,7 +120,7 @@ const BookingPagedLoggedInView = ({onBookingSaved}: BookingPageLoggedInViewProps
                   className="inputBootstrap"
                   placeholder="email@example.com"
                   isInvalid={!!errors.email}
-                  {...register("email", {required: "Required"})}
+                  {...register("email", { required: "Required" })}
                 />
                 <Form.Control.Feedback type="invalid">
                   {errors.email?.message}
@@ -134,7 +138,7 @@ const BookingPagedLoggedInView = ({onBookingSaved}: BookingPageLoggedInViewProps
                   className="inputBootstrap"
                   placeholder="Pick Up Address"
                   isInvalid={!!errors.pickup}
-                  {...register("pickup", {required: "Required"})}
+                  {...register("pickup", { required: "Required" })}
                 />
                 <Form.Control.Feedback type="invalid">
                   {errors.pickup?.message}
@@ -149,7 +153,7 @@ const BookingPagedLoggedInView = ({onBookingSaved}: BookingPageLoggedInViewProps
                   className="inputBootstrap"
                   placeholder="Destination Address"
                   isInvalid={!!errors.destination}
-                  {...register("destination", {required: "Required"})}
+                  {...register("destination", { required: "Required" })}
                 />
                 <Form.Control.Feedback type="invalid">
                   {errors.destination?.message}
@@ -168,14 +172,14 @@ const BookingPagedLoggedInView = ({onBookingSaved}: BookingPageLoggedInViewProps
                     type={"radio"}
                     value={"Yes"}
                     label={"Yes"}
-                    {...register("wheelchair", {required: "Required"})}
+                    {...register("wheelchair", { required: "Required" })}
                   />
                   <Form.Check
                     inline
                     type={"radio"}
                     value={"No"}
                     label={"No"}
-                    {...register("wheelchair", {required: "Required"})}
+                    {...register("wheelchair", { required: "Required" })}
                   />
                 </div>
                 <Form.Control.Feedback type="invalid">
@@ -193,14 +197,14 @@ const BookingPagedLoggedInView = ({onBookingSaved}: BookingPageLoggedInViewProps
                     type={"radio"}
                     value={1}
                     label={'1'}
-                    {...register("passenger", {required: "Required"})}
+                    {...register("passenger", { required: "Required" })}
                   />
                   <Form.Check
                     inline
                     type={"radio"}
                     value={2}
                     label={'2'}
-                    {...register("passenger", {required: "Required"})}
+                    {...register("passenger", { required: "Required" })}
                   />
                 </div>
                 <Form.Control.Feedback>
@@ -217,14 +221,14 @@ const BookingPagedLoggedInView = ({onBookingSaved}: BookingPageLoggedInViewProps
                     type={"radio"}
                     value={"One-Way Trip"}
                     label={'One-Way Trip'}
-                    {...register("trip", {required: "Required"})}
+                    {...register("trip", { required: "Required" })}
                   />
                   <Form.Check
                     inline
                     type={"radio"}
                     value={'Return Trip'}
                     label={'Return Trip'}
-                    {...register("trip", {required: "Required"})}
+                    {...register("trip", { required: "Required" })}
                   />
                 </div>
                 <Form.Control.Feedback type="invalid">
@@ -243,7 +247,7 @@ const BookingPagedLoggedInView = ({onBookingSaved}: BookingPageLoggedInViewProps
                 type="date"
                 placeholder="Please choose the booking date"
                 register={register}
-                registerOptions={{required: "Required"}}
+                registerOptions={{ required: "Required" }}
                 error={errors.date}
               />
             </div>
@@ -253,7 +257,8 @@ const BookingPagedLoggedInView = ({onBookingSaved}: BookingPageLoggedInViewProps
                 <Form.Select
                   aria-label="purpose"
                   isInvalid={!!errors.purpose}
-                  {...register("purpose", {required: "Required"})}>
+                  {...register("purpose", { required: "Required" })}
+                >
                   <option value="" disabled selected>Please click to select one option</option>
                   <option value="Shopping">Shopping</option>
                   <option value="Medical Appointment">Medical Appointment</option>
@@ -265,21 +270,20 @@ const BookingPagedLoggedInView = ({onBookingSaved}: BookingPageLoggedInViewProps
               </Form.Group>
             </div>
           </div>
-          {/*<br/>*/}
+          {/* Display available times for selected date */}
           <div className="row">
-            {
-              dateList.length > 0 ? <h3>The current available time</h3> : <>
-                {watchDate && <h3 style={{color: 'red'}}>There is no available time</h3>}  </>
-            }
+            {dateList.length > 0 ? <h3>The current available time</h3> : <>
+              {watchDate && <h3 style={{ color: 'red' }}>There is no available time</h3>}
+            </>}
             {dateList && dateList.map((date, index) => (
               <div className="col-md-6" key={index}>
                 <span>startTime--finishTime :</span>
-                <span>{date.startTime} -- {date.finishTime} </span>
+                <span>{date.startTime} -- {date.finishTime}</span>
               </div>
             ))}
-
           </div>
           <br/>
+          {/* Additional input fields */}
           <div className="row">
             <div className="col-md-6">
               <TextInputField
@@ -289,11 +293,10 @@ const BookingPagedLoggedInView = ({onBookingSaved}: BookingPageLoggedInViewProps
                 type="time"
                 placeholder="Please select pick up time"
                 register={register}
-                registerOptions={{required: "Required"}}
+                registerOptions={{ required: "Required" }}
                 error={errors.pickupTime}
               />
             </div>
-
             <div className="col-md-6">
               <TextInputField
                 className="mb-3"
@@ -302,13 +305,13 @@ const BookingPagedLoggedInView = ({onBookingSaved}: BookingPageLoggedInViewProps
                 type="time"
                 placeholder="Please select drop off time"
                 register={register}
-                registerOptions={{required: "Required"}}
+                registerOptions={{ required: "Required" }}
                 error={errors.dropoffTime}
               />
             </div>
           </div>
           <br/>
-
+          {/* Additional notes */}
           <Form.Group className="mb-3" controlId="additionalNotes">
             <Form.Label>Additional Notes for Drivers</Form.Label>
             <Form.Control
@@ -316,28 +319,30 @@ const BookingPagedLoggedInView = ({onBookingSaved}: BookingPageLoggedInViewProps
               rows={4}
               placeholder="Are there any access issues for our vehicle to reach your house (for example, steep driveway/shared driveway etc.)?"
               isInvalid={!!errors.additionalNotes}
-              {...register("additionalNotes", {required: "Required"})}
+              {...register("additionalNotes", { required: "Required" })}
             />
             <Form.Control.Feedback type="invalid">
               {errors.additionalNotes?.message}
             </Form.Control.Feedback>
           </Form.Group>
-        </Form> <br/>
-        <center>
-          <Button
-            type="submit"
-            form="bookingForm"
-            disabled={isSubmitting}
-            className={styles.submit_button}
-            variant="success">
-            Submit
-          </Button>
-        </center>
-        <br/>
+          {/* Submit button */}
+          <center>
+            <Button
+              type="submit"
+              form="bookingForm"
+              disabled={isSubmitting}
+              className={styles.submit_button}
+              variant="success"
+            >
+              Submit
+            </Button>
+          </center>
+          <br/>
+        </Form>
       </Card>
       <br/>
     </div>
   );
 }
 
-export default BookingPagedLoggedInView
+export default BookingPagedLoggedInView;

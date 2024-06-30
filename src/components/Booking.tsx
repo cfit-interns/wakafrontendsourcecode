@@ -1,12 +1,12 @@
 import { Button, Card } from "react-bootstrap";
 import { Bookings as BookingModel } from "../models/bookings";
 import styles from "../styles/BookingPage.module.css";
-import { formatDate } from "../utils/formatDate";;
+import { formatDate } from "../utils/formatDate"; // Importing formatDate utility function
 
 interface BookingProps {
-    bookingForm: BookingModel,
-    onDeleteBookingClicked: (booking: BookingModel) => void,
-    className?: string,
+    bookingForm: BookingModel, // Props interface with bookingForm of type BookingModel
+    onDeleteBookingClicked: (booking: BookingModel) => void, // Callback function for deleting a booking
+    className?: string, // Optional className prop
 }
 
 const Booking = ({ bookingForm, onDeleteBookingClicked, className }: BookingProps) => {
@@ -27,18 +27,20 @@ const Booking = ({ bookingForm, onDeleteBookingClicked, className }: BookingProp
         dropoffTime,
         additionalNotes,
         createdAt  
-    } = bookingForm;
+    } = bookingForm; // Destructuring bookingForm props
 
     return ( 
         <>
             <br/>
 
+            {/* Card component displaying booking details */}
             <Card className={styles.cardBody}>
                 <Card.Body>
                     <Card.Text>
                         <Card.Title>
-                            <center><b>Booking Request Form</b></center>
+                            <center><b>Booking Request Form</b></center> {/* Center-aligned title */}
                         </Card.Title>
+                        {/* Displaying booking details */}
                         Passenger's Name: {firstName} {lastName} <br />
                         Phone Number: {phoneNumber} <br />
                         Email Address: {email} <br />
@@ -54,18 +56,19 @@ const Booking = ({ bookingForm, onDeleteBookingClicked, className }: BookingProp
                         Additional Notes for Driver: {additionalNotes} <br />
                         <br />
                         <center>
-                        <Button
-                            onClick={() => {
-                                onDeleteBookingClicked(bookingForm);
-                            } }
-                            variant="success">
-                            Cancel Booking Request
-                        </Button>
+                            {/* Button to cancel booking */}
+                            <Button
+                                onClick={() => {
+                                    onDeleteBookingClicked(bookingForm); // Calling onDeleteBookingClicked with bookingForm
+                                }}
+                                variant="success">
+                                Cancel Booking Request
+                            </Button>
                         </center>
                     </Card.Text>
                 </Card.Body>
                 <Card.Footer>
-                    Booking Request Submitted: {formatDate(createdAt)}
+                    Booking Request Submitted: {formatDate(createdAt)} {/* Formatting createdAt date */}
                 </Card.Footer>
             </Card><br />
             
@@ -73,4 +76,4 @@ const Booking = ({ bookingForm, onDeleteBookingClicked, className }: BookingProp
     );
 }
  
-export default Booking;
+export default Booking; // Exporting Booking component

@@ -1,65 +1,71 @@
 import { useForm } from "react-hook-form";
 import { Rosters } from "../models/rosters";
-import { RosterDetail } from "../network/websites_api";
+import { RosterDetail } from "../network/websites_api"; // Importing RosterDetail type from websites_api
 import { useEffect, useState } from "react";
-import * as WebsitesApi from "../network/websites_api";
+import * as WebsitesApi from "../network/websites_api"; // Importing all exports from websites_api
 import { Button, Form, Modal } from "react-bootstrap";
 import TextInputField from "./form/TextInputField";
 import { FaPlus } from "react-icons/fa";
 import styles from "../styles/RosterPage.module.css";
 
 interface AddEditRosterDialogProps {
-    rosterToEdit?: Rosters,
-    onDismiss: () => void,
-    onRosterSaved: (roster: Rosters) => void,
+    rosterToEdit?: Rosters, // Optional roster object for editing
+    onDismiss: () => void, // Callback function for modal dismissal
+    onRosterSaved: (roster: Rosters) => void, // Callback function for saving roster
 }
 
 const AddEditRosterDialog = ({ rosterToEdit, onDismiss, onRosterSaved }: AddEditRosterDialogProps) => {
 
+    // State for managing time and status arrays
     const [time, setTime] = useState<string[]>([]);
     const [newTime, setNewTime] = useState("");
     const [newStatus, setNewStatus] = useState("");
     const [status, setStatus] = useState<string[]>([]);
 
+    // React Hook Form usage with RosterDetail type
     const { register, handleSubmit, formState : { errors, isSubmitting }, setValue } = useForm<RosterDetail>();
-        useEffect(() => {
-            if (rosterToEdit) {
-                const { date, driverName, vehiclePlate, startTime, finishTime } = rosterToEdit;
-                setValue("date", date);
-                setValue("driverName", driverName);
-                setValue("vehiclePlate", vehiclePlate);
-                setValue("startTime", startTime);
-                setValue("finishTime", finishTime);
-                setValue("availabilityTime", time);
-                setValue("availabilityStatus", status);
-            }
-        }, [rosterToEdit, time, status, setValue]);
 
-        async function onSubmit(detail: RosterDetail) {
-            try {
-              let rosterResponse: Rosters;
-              if (rosterToEdit) {
-                rosterResponse = await WebsitesApi.updateRoasters(rosterToEdit._id, detail);
-              } else {
-                rosterResponse = await WebsitesApi.createRosters(detail);
-              }
-              onRosterSaved(rosterResponse);
-            } catch (error) {
-                console.error(error);
-                alert(error);
-            }
+    // Effect to set form values when rosterToEdit changes
+    useEffect(() => {
+        if (rosterToEdit) {
+            const { date, driverName, vehiclePlate, startTime, finishTime } = rosterToEdit;
+            setValue("date", date);
+            setValue("driverName", driverName);
+            setValue("vehiclePlate", vehiclePlate);
+            setValue("startTime", startTime);
+            setValue("finishTime", finishTime);
+            setValue("availabilityTime", time);
+            setValue("availabilityStatus", status);
         }
+    }, [rosterToEdit, time, status, setValue]);
+
+    // Submit handler for form submission
+    async function onSubmit(detail: RosterDetail) {
+        try {
+            let rosterResponse: Rosters;
+            if (rosterToEdit) {
+                rosterResponse = await WebsitesApi.updateRoasters(rosterToEdit._id, detail); // Updating roster if editing
+            } else {
+                rosterResponse = await WebsitesApi.createRosters(detail); // Creating new roster if not editing
+            }
+            onRosterSaved(rosterResponse); // Calling onRosterSaved with the response
+        } catch (error) {
+            console.error(error); // Logging and alerting error if any
+            alert(error);
+        }
+    }
 
     return (
         <Modal show onHide={onDismiss}>
             <Modal.Header closeButton>
                 <Modal.Title>
-                    {rosterToEdit ? "Edit Roster" : "Add Roster"}
+                    {rosterToEdit ? "Edit Roster" : "Add Roster"} {/* Displaying modal title based on rosterToEdit */}
                 </Modal.Title>
             </Modal.Header>
 
             <Modal.Body className={styles.rosterPage}>
                 <Form id="addEditRosterForm" onSubmit={handleSubmit(onSubmit)}>
+                    {/* Form fields for roster details */}
                     <TextInputField
                         name="date"
                         label="Date"
@@ -115,19 +121,22 @@ const AddEditRosterDialog = ({ rosterToEdit, onDismiss, onRosterSaved }: AddEdit
                         error={errors.finishTime}
                     />
 
+                    {/* Displaying current roster times and statuses */}
                     <Form.Label>
                         <b>Roster</b>
                     </Form.Label>
                     <ol>
                         {time.map((time) =>
-                        <li key={time}>{time}</li>)}
+                            <li key={time}>{time}</li>)}
                     </ol>
                     <Form.Group>
-                        <ol>{status.map((status) =>
-                        <li key={status}>{status}</li>)}
+                        <ol>
+                            {status.map((status) =>
+                                <li key={status}>{status}</li>)}
                         </ol>
                     </Form.Group>
 
+                    {/* Form controls for adding new time and status */}
                     <Form.Group controlId="availabilityTime">
                         <Form.Label>Time</Form.Label>
                         <Form.Control
@@ -150,23 +159,25 @@ const AddEditRosterDialog = ({ rosterToEdit, onDismiss, onRosterSaved }: AddEdit
                         </Form.Select>
                     </Form.Group> <br />
 
+                    {/* Button to add new time and status */}
                     <Button
                         className={styles.button}
                         onClick={() => {
                             setTime([...time, newTime]);
                             setStatus([...status, newStatus]);
                         }}>
-                            <FaPlus/>
+                            <FaPlus/> {/* Icon for adding */}
                     </Button>
                 </Form>
             </Modal.Body>
 
             <Modal.Footer>
+                {/* Button to submit form */}
                 <Button
                     className={styles.button}
                     type="submit"
                     form="addEditRosterForm"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting} // Disabling button while form is submitting
                     >
                         Save
                 </Button>
@@ -175,4 +186,4 @@ const AddEditRosterDialog = ({ rosterToEdit, onDismiss, onRosterSaved }: AddEdit
     );
 }
 
-export default AddEditRosterDialog;
+export default AddEditRosterDialog; // Exporting AddEditRosterDialog component

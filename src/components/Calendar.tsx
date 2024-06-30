@@ -1,17 +1,16 @@
-import { Calendars as CalendarModel } from "../models/calendars"
+import { Calendars as CalendarModel } from "../models/calendars";
 import { formatDateTime } from "../utils/formatDate";
 import styles from "../styles/CalendarPage.module.css";
 import { Button, Card } from "react-bootstrap";
 
 interface CalendarProps {
-    calendarForm: CalendarModel,
-    className?: string,
-    onCalendarClicked: (calendar: CalendarModel) => void,
-    onDeleteCalendarClicked: (calendar: CalendarModel) => void,
+    calendarForm: CalendarModel;
+    className?: string;
+    onCalendarClicked: (calendar: CalendarModel) => void;
+    onDeleteCalendarClicked: (calendar: CalendarModel) => void;
 }
 
 const Calendar = ({ calendarForm, className, onCalendarClicked, onDeleteCalendarClicked }: CalendarProps) => {
-
     const {
         date,
         title,
@@ -25,6 +24,7 @@ const Calendar = ({ calendarForm, className, onCalendarClicked, onDeleteCalendar
 
     const parsedDate = new Date(date);
 
+    // Determine if the calendar was updated or created
     let createdUpdatedCalendar: string;
     if (updatedAt > createdAt) {
         createdUpdatedCalendar = "Calendar Updated: " + formatDateTime(updatedAt);
@@ -49,18 +49,18 @@ const Calendar = ({ calendarForm, className, onCalendarClicked, onDeleteCalendar
                     <br />
                     <center>
                         <Button
-                            onClick={() => {
-                                onDeleteCalendarClicked(calendarForm)
-                            } }
-                            variant="success">
-                                Delete Event
+                            onClick={() => onDeleteCalendarClicked(calendarForm)}
+                            variant="success"
+                        >
+                            Delete Event
                         </Button>
                     </center>
                 </Card.Body>
                 <Card.Footer>
-                    Event Made: {formatDateTime(createdAt)}
+                    {createdUpdatedCalendar}
                 </Card.Footer>
-            </Card><br />
+            </Card>
+            <br />
         </>
     );
 }

@@ -1,23 +1,23 @@
 import { Calendars } from "../models/calendars";
 import { useForm } from "react-hook-form";
-import { CalendarDetail } from "../network/websites_api";
-import * as WebsitesApi from "../network/websites_api";
+import { CalendarDetail } from "../network/websites_api"; // Importing CalendarDetail type from websites_api
+import * as WebsitesApi from "../network/websites_api"; // Importing all exports from websites_api
 import { Button, Form, Modal } from "react-bootstrap";
 import styles from "../styles/CalendarPage.module.css";
 import TextInputField from "./form/TextInputField";
 
 interface AddEditCalendarDialogProps {
-    calendarToEdit?: Calendars,
-    selectedDate: Date | null;
-    onDismiss: () => void,
-    onCalendarSaved: (calendar: Calendars) => void,
+    calendarToEdit?: Calendars, // Optional calendar object for editing
+    selectedDate: Date | null; // Nullable selected date
+    onDismiss: () => void, // Callback function for modal dismissal
+    onCalendarSaved: (calendar: Calendars) => void, // Callback function for saving calendar
 }
 
 const AddEditCalendarDialog = ({ calendarToEdit, selectedDate, onDismiss, onCalendarSaved }: AddEditCalendarDialogProps) => {
 
     const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<CalendarDetail>({
         defaultValues: {
-            date: calendarToEdit?.date || "",
+            date: calendarToEdit?.date || "", // Setting default values from calendarToEdit or empty string
             title: calendarToEdit?.title || "",
             description: calendarToEdit?.description || "",
             location: calendarToEdit?.location || "",
@@ -26,38 +26,38 @@ const AddEditCalendarDialog = ({ calendarToEdit, selectedDate, onDismiss, onCale
         }
     });
 
-        async function onSubmit(detail: CalendarDetail) {
-            try {
-                if (selectedDate) {
-                    detail.date = selectedDate.toISOString().split("T")[0];
-                } else {
-                    console.error("Selected date is not available");
-                }
-
-                let calendarResponse: Calendars;
-                if (calendarToEdit) {
-                    calendarResponse = await WebsitesApi.updateCalendars(calendarToEdit._id, detail);
-                } else {
-                    calendarResponse = await WebsitesApi.createCalendars(detail);
-                }
-                onCalendarSaved(calendarResponse);
-            } catch (error) {
-                console.error(error);
-                alert(error);
+    async function onSubmit(detail: CalendarDetail) {
+        try {
+            if (selectedDate) {
+                detail.date = selectedDate.toISOString().split("T")[0]; // Formatting selectedDate to ISO date string
+            } else {
+                console.error("Selected date is not available"); // Logging error if selectedDate is null
             }
+
+            let calendarResponse: Calendars;
+            if (calendarToEdit) {
+                calendarResponse = await WebsitesApi.updateCalendars(calendarToEdit._id, detail); // Updating calendar if editing
+            } else {
+                calendarResponse = await WebsitesApi.createCalendars(detail); // Creating new calendar if not editing
+            }
+            onCalendarSaved(calendarResponse); // Calling onCalendarSaved with the response
+        } catch (error) {
+            console.error(error); // Logging and alerting error if any
+            alert(error);
         }
+    }
 
     return (
         <Modal show onHide={onDismiss}>
             <Modal.Header closeButton>
                 <Modal.Title className={styles.Title}>
-                    {calendarToEdit? "Edit Event" : "Add Event"}
+                    {calendarToEdit? "Edit Event" : "Add Event"} {/* Displaying modal title based on calendarToEdit */}
                 </Modal.Title>
             </Modal.Header>
 
             <Modal.Body>
                 <Form.Label className={styles.date}>
-                    <b><center>Date: {selectedDate?.toDateString()}</center></b>
+                    <b><center>Date: {selectedDate?.toDateString()}</center></b> {/* Displaying selectedDate in modal body */}
                 </Form.Label>
             </Modal.Body>
             <Modal.Body className={styles.calendarPage}>
@@ -119,7 +119,7 @@ const AddEditCalendarDialog = ({ calendarToEdit, selectedDate, onDismiss, onCale
                     className={styles.button}
                     type="submit"
                     form="addEditCalendarForm"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting} // Disabling button while form is submitting
                     >
                         Save
                 </Button>
@@ -127,4 +127,4 @@ const AddEditCalendarDialog = ({ calendarToEdit, selectedDate, onDismiss, onCale
         </Modal>
     );
 }
-export default AddEditCalendarDialog;
+export default AddEditCalendarDialog; // Exporting AddEditCalendarDialog component

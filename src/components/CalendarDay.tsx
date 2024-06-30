@@ -1,21 +1,23 @@
 import styles from "../styles/CalendarPage.module.css";
 
 interface CalendarDayProps {
-    date: Date,
-    dayEventBadge: number,
-    onClick: (date: Date) => void;
+    date: Date;                 // Date to display for this calendar day
+    dayEventBadge: number;      // Number of events for this day (to show on badge)
+    onClick: (date: Date) => void;  // Callback function when the day is clicked
 }
 
-const CalendarDay: React.FC<CalendarDayProps> = ({ date,dayEventBadge, onClick }) => {
+const CalendarDay: React.FC<CalendarDayProps> = ({ date, dayEventBadge, onClick }) => {
+    // Handle click event on the calendar day
     const handleDayClick = () => {
-        onClick(date);
+        onClick(date);  // Call onClick callback with the date parameter
     }
 
     return (
         <div className={styles.calendar_day} onClick={handleDayClick}>
-            {date.getDate()}
+            {date.getDate()} {/* Display the day of the month */}
             &nbsp;
-            {dayEventBadge > 0 && <span className="badge text-bg-danger">{dayEventBadge}</span> }
+            {/* Render a badge if there are events on this day */}
+            {dayEventBadge > 0 && <span className="badge text-bg-danger">{dayEventBadge}</span>}
         </div>
     );
 };
